@@ -1,0 +1,37 @@
+services:
+  php:
+    build:
+      context: ..
+      dockerfile: app/docker/php/Dockerfile
+      args:
+        TIMEZONE: ${TIMEZONE}
+    container_name: siroko_php
+    volumes:
+      - ./:/var/www/siroko-back/
+    networks:
+      - symfony
+  nginx:
+    build:
+      context: ..
+      dockerfile: app/docker/nginx/Dockerfile
+    container_name: siroko
+    volumes:
+      - ./app:/var/www/siroko-back/
+    ports:
+      - 80:80
+    networks:
+      - symfony
+
+  redis:
+    platform: linux/arm64
+    container_name: siroko-redis
+    image: redis:5-stretch
+    hostname: redis
+    ports:
+      - "6379:6379"
+    restart: always
+
+
+
+networks:
+  symfony:
